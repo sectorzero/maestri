@@ -1,0 +1,22 @@
+# ---------------------------------
+# Maestri library module SConscript 
+# ---------------------------------
+
+# USER DEFINED >>
+libmod_src = Split("""
+    HelloOne.cpp
+    """)
+# <<
+
+Import( ['env', 'mod', 'packagelibpath', 'packagebinpath', 'packagebuildroot'] )
+
+libmod_lib = env.StaticLibrary( target = mod, source = libmod_src) 
+libmod = env.Install( packagelibpath, libmod_lib )
+
+libmod_ut = env.SConscript(
+                'unittests/SConscript',
+                variant_dir = packagebuildroot + '/test/lib' + mod,
+                duplicate = 0,
+                exports = ['env', 'mod', 'packagelibpath', 'packagebinpath', 'packagebuildroot'] )
+
+Return( ['libmod', 'libmod_ut'] )

@@ -1,0 +1,41 @@
+# -----------------------
+# Maestri root SConstruct
+# -----------------------
+
+# USER DEFINED >>
+libmodules = Split("""
+    ModuleOne
+    ModuleTwo
+    """)
+
+binmodules = Split("""
+    sampleapp
+    """)
+# <<
+
+builddir = '#build'
+packagelibpath = builddir + '/lib'
+packagebinpath = builddir + '/bin'
+packagebuildroot = builddir + '/private'
+
+env = Environment()
+
+env.Append( CPPFLAGS = ['-g'] )
+env.Append( CPPPATH = ['#/'] )
+env.Append( LIBPATH = [ packagelibpath ] )
+
+Export('env')
+
+def buildmodules( prefix, modulelist, result ) :
+    for mod in modulelist :
+        moddir = prefix + mod
+        targetnode = env.SConscript(
+            moddir + '/SConscript',
+            variant_dir = packagebuildroot + '/' + moddir,
+            duplicate = 0,
+            exports = ['env', 'mod', 'packagelibpath', 'packagebinpath', 'packagebuildroot'] )
+        result.append(targetnode)
+
+targetnodes = []
+buildmodules('lib', libmodules, targetnodes)
+buildmodules('', binmodules, targetnodes)

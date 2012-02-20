@@ -1,0 +1,23 @@
+# -----------------------------------
+# Maestri unittests module SConscript 
+# -----------------------------------
+
+# USER DEFINED >>
+ut_src = Split("""
+    TestHelloOne.cpp
+    """)
+# <<
+
+Import( ['env', 'mod', 'packagelibpath', 'packagebinpath', 'packagebuildroot'] )
+
+modenv = env.Clone()
+modenv.Append( LIBS = ['cppunit'] )
+modenv.Append( LIBS = ['ModuleOne'] )
+
+ut_tgts = []
+for ut in ut_src :
+    ut_bin = modenv.Program( source = ut ) 
+    ut_tgt = modenv.Install( '#build/test/lib' + mod, ut_bin )
+    ut_tgts.append(ut_tgt)
+
+Return( ['ut_tgts'] )
