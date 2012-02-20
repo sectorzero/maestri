@@ -1,0 +1,67 @@
+#!/bin/sh
+
+#set -x 
+
+pkg_dir=$1
+pkg_name=$2
+lib_name=$3
+
+if [ $# -ne 3 ]; then
+	echo 2>&1 "Usage : $0 <PackageDir> <Package> <LibName>"
+	exit 127
+fi
+
+if [ ! -e $pkg_dir ] || [ ! -d $pkg_dir ]; then
+	echo "$pkg_dir does not exist or is not a directory"
+	exit 127
+fi
+
+pkgroot="$pkg_dir/$pkg_name"
+
+if [ ! -e $pkgroot ]; then
+	echo "$pkg_dir/$pkg_name does not exist"
+	exit 127
+fi
+
+if [ ! -e $pkgroot/SConstruct ]; then
+	echo "$pkgroot does not seem to be a MAESTRI pkg"
+	exit 127
+fi
+
+lib_dir="lib$lib_name"
+
+if [ -e $pkgroot/$lib_dir ]; then
+	echo "$pkgroot/$lib_dir already exists"
+	exit 127
+fi
+
+template_dir="$CYANIDE_ROOT/maestri/template"
+
+# create lib directory
+mkdir -p $pkgroot/$lib_dir
+if [ $? -ne 0 ]; then
+    echo "Error creating library module $pkgroot/$lib_dir"
+    exit -1
+fi
+cp $template_dir/lib_SConscript.template $pkgroot/$lib_dir/SConscript
+if [ $? -ne 0 ]; then
+    echo "Error creating library SConscript $pkgroot/$lib_dir"
+    exit -1
+fi
+
+# create unittests directory 
+unittests_dir='unittests'
+mkdir -p $pkgroot/$lib_dir/$unittests_dir
+if [ $? -ne 0 ]; then
+    echo "Error creating unittests directory $pkgroot/$lib_dir/$unittests_dir"
+    exit -1
+fi
+cp $template_dir/unittests_SConscript.template $pkgroot/$lib_dir/$unittests_dir/SConscript
+if [ $? -ne 0 ]; then
+    echo "Error creating unittests SConscript $pkgroot/$lib_dir/$unittests_dir"
+    exit -1
+fi
+
+echo "*** MAESTRI : Library module $lib_name created ***"
+
+exit 0

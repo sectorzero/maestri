@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# set -x 
+
+pkg_dir=$1
+pkg_name=$2
+
+if [ $# -ne 2 ]; then
+	echo 2>&1 "Usage : $0 <PackageDir> <PackageName>"
+	exit 127
+fi
+
+if [ ! -e $pkg_dir ] || [ ! -d $pkg_dir ]; then
+	echo "$pkg_dir does not exist or is not a directory"
+	exit 127
+fi
+
+pkgroot="$pkg_dir/$pkg_name"
+
+if [ -e $pkgroot ]; then
+	echo "$pkg_dir/$pkg_name already exists"
+	exit 127
+fi
+
+# create package directory
+mkdir -p $pkgroot 
+if [ $? -ne 0 ]; then
+    echo "Error creating pkg root $pkgroot"
+    exit -1
+fi
+
+# install SConstruct
+template_dir="$CYANIDE_ROOT/maestri/template"
+cp $template_dir/SConstruct.template $pkgroot/SConstruct  
+if [ $? -ne 0 ]; then
+    echo "Error creating SConstruct for Package"
+    exit -1
+fi
+
+# Add .gitignore
+touch $pkgroot/.gitignore
+echo '.sconsign.dblite' >> $pkgroot/.gitignore
+echo 'build/*' >> $pkgroot/.gitignore
+
+echo "*** MAESTRI : Package $pkg_name created ***"
+
+exit 0

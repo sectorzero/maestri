@@ -1,0 +1,18 @@
+# ---------------------------------
+# Maestri binary module SConscript 
+# ---------------------------------
+
+# USER DEFINED >>
+binmod_src = Split("""
+    """)
+# << 
+
+Import( ['env', 'mod', 'packagelibpath', 'packagebinpath', 'packagebuildroot'] )
+
+modenv = env.Clone()
+modenv.Append(LIBS = [])
+
+binmod_bin = modenv.Program( target = mod, source = binmod_src) 
+binmod = modenv.Install( packagebinpath, binmod_bin )
+
+Return( ['binmod'] )

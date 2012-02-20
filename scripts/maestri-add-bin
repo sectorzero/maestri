@@ -1,0 +1,54 @@
+#!/bin/sh
+
+#set -x 
+
+pkg_dir=$1
+pkg_name=$2
+bin_name=$3
+
+if [ $# -ne 3 ]; then
+	echo 2>&1 "Usage : $0 <PackageDir> <Package> <BinaryModule>"
+	exit 127
+fi
+
+if [ ! -e $pkg_dir ] || [ ! -d $pkg_dir ]; then
+	echo "$pkg_dir does not exist or is not a directory"
+	exit 127
+fi
+
+pkgroot="$pkg_dir/$pkg_name"
+
+if [ ! -e $pkgroot ]; then
+	echo "$pkg_dir/$pkg_name does not exist"
+	exit 127
+fi
+
+if [ ! -e $pkgroot/SConstruct ]; then
+	echo "$pkg_dir/$pkg_name does not seem to be a MAESTRI pkg"
+	exit 127
+fi
+
+bin_dir="$bin_name"
+
+if [ -e $pkgroot/$bin_dir ]; then
+	echo "$pkgroot/$bin_dir already exists"
+	exit 127
+fi
+
+template_dir="$CYANIDE_ROOT/maestri/template"
+
+# create package directory
+mkdir -p $pkgroot/$bin_dir
+if [ $? -ne 0 ]; then
+    echo "Error creating binary module $pkgroot/$bin_dir"
+    exit -1
+fi
+cp $template_dir/bin_SConscript.template $pkgroot/$bin_dir/SConscript
+if [ $? -ne 0 ]; then
+    echo "Error creating binary SConscript $pkgroot/$bin_dir"
+    exit -1
+fi
+
+echo "*** MAESTRI : Binary module $bin_name created ***"
+
+exit 0
