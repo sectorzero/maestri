@@ -1,0 +1,8 @@
+Priority features set
+---------------------
+- 'clean' target to perform 'scons -c' and additional cleanup of build
+directories
+- 'test' target to be able to
+-- run single unit test
+-- run all unit test suites in package
+- 'application' target to compose complete command to execute binary
