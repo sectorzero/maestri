@@ -1,0 +1,40 @@
+Maestri User Manual
+-------------------
+Maestri is a build tool built on top of scons for GNU/Linux C/C++ development.
+The goal of Maestri is to provide a simple, structured, easy-to-use build tool.
+
+Some of the aspects of this build tool are :
+- Enforces a simple structure on the C/C++ package which is intuitive and helps
+  to organize the project cleanly
+- Almost no code required to set-up a build. All that is required by the user is
+  his custom module naming, dependencies
+- Out of the box support for organizing, writing and building unittests
+- Provides build, binary and debugger targets
+- Provides targets to execute unittests
+- Build artifacts are kept seperate from source files
+- Variant builds are built in uniformly into the design
+
+Structure of a Maestri package :
+-------------------------------
+PackageRoot
++ libraryModule ( 0..n )
+    + unittestModule
++ binaryModule ( 0..n )
+
+Example :
+--------
+See the SamplePacakge to get a feel of the Maestri package structure and see it
+in action
+
+Setup :
+------------
+add MAESTRI_HOME/maestri/scripts to local tools path
+
+Basic Usage / Dev Cycle :
+------------------------
+a. init maestri pkg
+b. add maestri lib, write code, use c++ .h/.cpp templates
+c. add maestri bin, write code
+d. add unit tests in maestri pkg : use cppunit templates
+e. make thru vim ( uses scons and maestri generated scons scripts )
+f. run exec or unit tests
